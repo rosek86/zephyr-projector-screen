@@ -14,28 +14,43 @@
 #include <app/ConcreteAttributePath.h>
 
 #include "libs/projector_thread.h"
+#include "libs/screen_thread.h"
 
 using namespace ::chip;
 using namespace ::chip::app::Clusters;
 using namespace ::chip::app::Clusters::OnOff;
+
+static void update_projector(uint8_t *value)
+{
+	ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8 ", %d", *value);
+
+	*value ? projector_power_on() : projector_power_off();
+
+	AppTask::Instance().GetPWMDevice().InitiateAction(*value ? PWMDevice::ON_ACTION : PWMDevice::OFF_ACTION,
+							  static_cast<int32_t>(AppEventType::Lighting), value);
+}
+
+static void update_screen(uint8_t *value)
+{
+	*value ? screen_down() : screen_up();
+}
 
 void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
 				       uint16_t size, uint8_t *value)
 {
 	ClusterId clusterId = attributePath.mClusterId;
 	AttributeId attributeId = attributePath.mAttributeId;
+	EndpointId endpointId = attributePath.mEndpointId;
 
 	if (clusterId == OnOff::Id && attributeId == OnOff::Attributes::OnOff::Id) {
-		ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
-
-		if (*value) {
-			projector_power_on();
-		} else {
-			projector_power_off();
+		switch (endpointId) {
+			case 1:
+				update_projector(value);
+				break;
+			case 2:
+				update_screen(value);
+				break;
 		}
-
-		AppTask::Instance().GetPWMDevice().InitiateAction(*value ? PWMDevice::ON_ACTION : PWMDevice::OFF_ACTION,
-								  static_cast<int32_t>(AppEventType::Lighting), value);
 	}
 }
 
