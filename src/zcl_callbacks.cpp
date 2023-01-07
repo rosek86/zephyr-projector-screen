@@ -22,7 +22,7 @@ using namespace ::chip::app::Clusters::OnOff;
 
 static void update_projector(uint8_t *value)
 {
-	ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8 ", %d", *value);
+	ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8, *value);
 
 	*value ? projector_power_on() : projector_power_off();
 
