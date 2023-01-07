@@ -9,6 +9,8 @@
 #include "app_config.h"
 #include "led_util.h"
 #include "pwm_device.h"
+#include "libs/projector_thread.h"
+#include "libs/screen_thread.h"
 
 #ifdef CONFIG_NET_L2_OPENTHREAD
 #include "thread_util.h"
@@ -121,8 +123,22 @@ app::Clusters::NetworkCommissioning::Instance
 
 CHIP_ERROR AppTask::Init()
 {
-	/* Initialize CHIP stack */
-	LOG_INF("Init CHIP stack");
+  int ret;
+
+  /* Initialize CHIP stack */
+  LOG_INF("Init CHIP stack");
+
+  ret = projector_init();
+  if (ret != 0) {
+    LOG_ERR("Error: projector_init() failed with %d\n", ret);
+    return chip::System::MapErrorZephyr(ret);
+  }
+
+  ret = screen_init();
+  if (ret != 0) {
+    LOG_ERR("Error: screen_init() failed with %d\n", ret);
+    return chip::System::MapErrorZephyr(ret);
+  }
 
 	CHIP_ERROR err = chip::Platform::MemoryInit();
 	if (err != CHIP_NO_ERROR) {
@@ -174,7 +190,7 @@ CHIP_ERROR AppTask::Init()
 	UpdateStatusLED();
 
 	/* Initialize buttons */
-	int ret = dk_buttons_init(ButtonEventHandler);
+	ret = dk_buttons_init(ButtonEventHandler);
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
 		return chip::System::MapErrorZephyr(ret);

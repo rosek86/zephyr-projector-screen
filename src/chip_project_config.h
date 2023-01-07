@@ -25,3 +25,16 @@
  * interval to survive the stall.
  */
 #define CHIP_CONFIG_MRP_LOCAL_ACTIVE_RETRY_INTERVAL (1000_ms32)
+
+
+// CONFIG_CHIP_DEVICE_VENDOR_ID sets the device manufacturer identifier that is assigned by the Connectivity Standards Alliance.
+
+// CONFIG_CHIP_DEVICE_PRODUCT_ID sets the product identifier that is assigned by the product manufacturer.
+
+// CONFIG_CHIP_DEVICE_TYPE sets the type of the device using the Matter Device Type Identifier,
+//                         for example Door Lock (0x000A) or Dimmable Light Bulb (0x0101).
+
+// CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE enables including an optional device type subtype in the commissionable node discovery record.
+//                                           This allows filtering of the discovery results to find the nodes that match the device type.
+
+// CONFIG_CHIP_ROTATING_DEVICE_ID enables an optional rotating device identifier feature that provides an additional unique identifier for each device. This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.

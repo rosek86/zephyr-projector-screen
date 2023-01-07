@@ -13,6 +13,8 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/ConcreteAttributePath.h>
 
+#include "libs/projector_thread.h"
+
 using namespace ::chip;
 using namespace ::chip::app::Clusters;
 using namespace ::chip::app::Clusters::OnOff;
@@ -25,16 +27,15 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 
 	if (clusterId == OnOff::Id && attributeId == OnOff::Attributes::OnOff::Id) {
 		ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
+
+		if (*value) {
+			projector_power_on();
+		} else {
+			projector_power_off();
+		}
+
 		AppTask::Instance().GetPWMDevice().InitiateAction(*value ? PWMDevice::ON_ACTION : PWMDevice::OFF_ACTION,
 								  static_cast<int32_t>(AppEventType::Lighting), value);
-	} else if (clusterId == LevelControl::Id && attributeId == LevelControl::Attributes::CurrentLevel::Id) {
-		ChipLogProgress(Zcl, "Cluster LevelControl: attribute CurrentLevel set to %" PRIu8 "", *value);
-		if (AppTask::Instance().GetPWMDevice().IsTurnedOn()) {
-			AppTask::Instance().GetPWMDevice().InitiateAction(
-				PWMDevice::LEVEL_ACTION, static_cast<int32_t>(AppEventType::Lighting), value);
-		} else {
-			ChipLogDetail(Zcl, "LED is off. Try to use move-to-level-with-on-off instead of move-to-level");
-		}
 	}
 }
 

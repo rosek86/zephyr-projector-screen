@@ -44,6 +44,11 @@ target_sources(app PRIVATE
     src/zcl_callbacks.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
+    src/libs/ir_protocol.c
+    src/libs/ir_thread.c
+    src/libs/ir_remote.c
+    src/libs/projector_thread.c
+    src/libs/screen_thread.c
     ${COMMON_ROOT}/src/led_widget.cpp
     $<$<BOOL:${CONFIG_NET_L2_OPENTHREAD}>:${COMMON_ROOT}/src/thread_util.cpp>
     ${COMMON_ROOT}/src/pwm_device.cpp
