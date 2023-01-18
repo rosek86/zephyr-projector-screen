@@ -6,6 +6,8 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+list(APPEND BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.)
+
 get_filename_component(MATTER_MODULE_ROOT $ENV{ZEPHYR_BASE}/../modules/lib/matter REALPATH)
 
 # Set Kconfig root files that will be processed as a first Kconfig for used child images.
